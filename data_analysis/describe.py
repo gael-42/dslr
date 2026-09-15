@@ -12,9 +12,12 @@ def main():
         assert len(sys.argv) == 2, "wrong argument count"
         assert sys.argv[1].endswith('.csv'), "wrong file type"
         with open(sys.argv[1]) as data:
-            content = csv.reader(data, delimiter=' ', quotechar='|')
-            for row in content:
-                print(', '.join(row))
+            content = csv.reader(data)
+            print(content.__next__())
+            for x in content.__next__():
+                print(x)
+                if x.isdecimal():
+                    print(x)
     except AssertionError as error:
         print("AssertionError:", error)
 
