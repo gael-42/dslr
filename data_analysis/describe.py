@@ -5,19 +5,14 @@ Each feature gets a column, each info gets a row.
 Cannot use function that calculates info by itself.
 """
 import sys
-import csv
+import pandas as pd
 
 def main():
     try:
         assert len(sys.argv) == 2, "wrong argument count"
         assert sys.argv[1].endswith('.csv'), "wrong file type"
-        with open(sys.argv[1]) as data:
-            content = csv.reader(data)
-            print(content.__next__())
-            for x in content.__next__():
-                print(x)
-                if x.isdecimal():
-                    print(x)
+        dataset = pd.read_csv(sys.argv[1], index_col="Index")
+        print(dataset.head())
     except AssertionError as error:
         print("AssertionError:", error)
 
