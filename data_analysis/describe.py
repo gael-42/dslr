@@ -8,13 +8,23 @@ import sys
 import pandas as pd
 import numpy as np
 
+def calculate_count(series):
+    count = 0
+    for value in series:
+        if not pd.isna(value):
+            count +=1
+    return count
+
+def calculate_means(series):
+    pass
+
 def describe(dataset: pd.DataFrame):
     num = dataset.select_dtypes(include= np.number)
-    #print(num.head())
-    for column in num:
-        columnSeries = num[column]
-        print('name = ', column)
-        print('content = ', columnSeries.values)
+    counts = num.apply(calculate_count)
+    print('COUNTS')
+    print(counts)
+    # means = num.apply(calculate_means)
+    # print(means)
 
 def main():
     try:
