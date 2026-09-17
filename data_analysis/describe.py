@@ -7,6 +7,34 @@ Cannot use function that calculates info by itself.
 import sys
 import pandas as pd
 import numpy as np
+import math
+
+def calculate_max(series):
+    pass
+
+def calculate_75(series):
+    pass
+
+def calculate_50(series):
+    pass
+
+def calculate_25(series):
+    pass
+
+def calculate_min(series):
+    pass
+
+def calculate_std(series):
+    clean = series.dropna()
+    count = len(clean)
+    mean = sum(clean) / count
+    total_squared = 0
+    for value in clean:
+        diff_squared = (value - mean) ** 2
+        total_squared += diff_squared
+    div = total_squared / (count - 1)
+    return math.sqrt(div)
+
 
 def calculate_means(series):
     clean = series.dropna()
@@ -27,6 +55,9 @@ def describe(dataset: pd.DataFrame):
     means = num.apply(calculate_means)
     print('MEANS')
     print(means)
+    std = num.apply(calculate_std)
+    print('STD')
+    print(std)
 
 def main():
     try:
