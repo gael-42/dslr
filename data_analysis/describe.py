@@ -8,6 +8,10 @@ import sys
 import pandas as pd
 import numpy as np
 
+def calculate_means(series):
+    clean = series.dropna()
+    return sum(clean) / len(clean)
+
 def calculate_count(series):
     count = 0
     for value in series:
@@ -15,16 +19,14 @@ def calculate_count(series):
             count +=1
     return count
 
-def calculate_means(series):
-    pass
-
 def describe(dataset: pd.DataFrame):
     num = dataset.select_dtypes(include= np.number)
     counts = num.apply(calculate_count)
     print('COUNTS')
     print(counts)
-    # means = num.apply(calculate_means)
-    # print(means)
+    means = num.apply(calculate_means)
+    print('MEANS')
+    print(means)
 
 def main():
     try:
