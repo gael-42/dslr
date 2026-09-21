@@ -10,7 +10,13 @@ import numpy as np
 import math
 
 def calculate_max(series):
-    pass
+    clean = series.dropna()
+    max = 0
+    for value in series:
+        if value > max:
+            max = value
+    return max
+
 
 def calculate_75(series):
     pass
@@ -19,10 +25,19 @@ def calculate_50(series):
     pass
 
 def calculate_25(series):
-    pass
+    clean = series.dropna()
+    order = clean.sort_values(ascending=True)
+    ordinal_rank = round(25 / 100 * order.count())
+    percent = order.loc[ordinal_rank]
+    return percent
 
 def calculate_min(series):
-    pass
+    clean = series.dropna()
+    min = 0
+    for value in clean:
+        if value < min:
+            min = value
+    return min
 
 def calculate_std(series):
     clean = series.dropna()
@@ -50,14 +65,17 @@ def calculate_count(series):
 def describe(dataset: pd.DataFrame):
     num = dataset.select_dtypes(include= np.number)
     counts = num.apply(calculate_count)
-    print('COUNTS')
-    print(counts)
-    means = num.apply(calculate_means)
-    print('MEANS')
-    print(means)
-    std = num.apply(calculate_std)
-    print('STD')
-    print(std)
+    # print('COUNTS')
+    # print(counts)
+    # means = num.apply(calculate_means)
+    # print('MEANS')
+    # print(means)
+    # std = num.apply(calculate_std)
+    # print('STD')
+    # print(std)
+    percent_25 = num.apply(calculate_25)
+    print(percent_25)
+    print(num.describe())
 
 def main():
     try:
