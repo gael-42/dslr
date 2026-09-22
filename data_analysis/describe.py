@@ -11,6 +11,8 @@ import math
 
 def calculate_max(series):
     clean = series.dropna()
+    if len(clean) == 0:
+        return np.nan
     max = 0
     for value in series:
         if value > max:
@@ -19,20 +21,54 @@ def calculate_max(series):
 
 
 def calculate_75(series):
-    pass
+    clean = series.dropna().sort_values().to_numpy()
+    if len(clean) == 0:
+        return np.nan
+    clean.sort()
+    n = len(clean)
+    q = 0.75
+    idx = q * (n - 1)
+    k = int(np.floor(idx))
+    f = idx - k
+    if k >= n - 1:
+        return float(clean[-1])
+    percentile = clean[k] + f * (clean[k + 1] - clean[k])
+    return percentile
 
 def calculate_50(series):
-    pass
+    clean = series.dropna().sort_values().to_numpy()
+    if len(clean) == 0:
+        return np.nan
+    clean.sort()
+    n = len(clean)
+    q = 0.50
+    idx = q * (n - 1)
+    k = int(np.floor(idx))
+    f = idx - k
+    if k >= n - 1:
+        return float(clean[-1])
+    percentile = clean[k] + f * (clean[k + 1] - clean[k])
+    return percentile
 
 def calculate_25(series):
-    clean = series.dropna()
-    order = clean.sort_values(ascending=True)
-    ordinal_rank = round(25 / 100 * order.count())
-    percent = order.loc[ordinal_rank]
-    return percent
+    clean = series.dropna().sort_values().to_numpy()
+    if len(clean) == 0:
+        return np.nan
+    clean.sort()
+    n = len(clean)
+    q = 0.25 # = 25 percentile
+    idx = q * (n - 1)
+    k = int(np.floor(idx)) #round down to nearest integer
+    f = idx - k
+    if k >= n - 1:
+        return float(clean[-1])
+    percentile = clean[k] + f * (clean[k + 1] - clean[k])
+    return percentile
 
 def calculate_min(series):
     clean = series.dropna()
+    if len(clean) == 0:
+        return np.nan
     min = 0
     for value in clean:
         if value < min:
@@ -41,6 +77,8 @@ def calculate_min(series):
 
 def calculate_std(series):
     clean = series.dropna()
+    if len(clean) == 0:
+        return np.nan
     count = len(clean)
     mean = sum(clean) / count
     total_squared = 0
@@ -53,6 +91,8 @@ def calculate_std(series):
 
 def calculate_means(series):
     clean = series.dropna()
+    if len(clean) == 0:
+        return np.nan
     return sum(clean) / len(clean)
 
 def calculate_count(series):
@@ -65,17 +105,23 @@ def calculate_count(series):
 def describe(dataset: pd.DataFrame):
     num = dataset.select_dtypes(include= np.number)
     counts = num.apply(calculate_count)
-    # print('COUNTS')
-    # print(counts)
-    # means = num.apply(calculate_means)
-    # print('MEANS')
-    # print(means)
-    # std = num.apply(calculate_std)
-    # print('STD')
-    # print(std)
+    print('COUNTS')
+    print(counts)
+    means = num.apply(calculate_means)
+    print('MEANS')
+    print(means)
+    std = num.apply(calculate_std)
+    print('STD')
+    print(std)
+    print('25')
     percent_25 = num.apply(calculate_25)
     print(percent_25)
-    print(num.describe())
+    print('50')
+    percent_50 = num.apply(calculate_50)
+    print(percent_50)
+    print('75')
+    percent_75 = num.apply(calculate_75)
+    print(percent_75)
 
 def main():
     try:
