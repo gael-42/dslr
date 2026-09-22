@@ -105,23 +105,25 @@ def calculate_count(series):
 def describe(dataset: pd.DataFrame):
     num = dataset.select_dtypes(include= np.number)
     counts = num.apply(calculate_count)
-    print('COUNTS')
-    print(counts)
     means = num.apply(calculate_means)
-    print('MEANS')
-    print(means)
-    std = num.apply(calculate_std)
-    print('STD')
-    print(std)
-    print('25')
+    stds = num.apply(calculate_std)
+    mins = num.apply(calculate_min)
     percent_25 = num.apply(calculate_25)
-    print(percent_25)
-    print('50')
     percent_50 = num.apply(calculate_50)
-    print(percent_50)
-    print('75')
     percent_75 = num.apply(calculate_75)
-    print(percent_75)
+    maxs = num.apply(calculate_max)
+    description = pd.DataFrame({
+        'Count': counts,
+        'Mean': means,
+        'Std': stds,
+        'Min': mins,
+        '25%': percent_25,
+        '50%': percent_50,
+        '75%': percent_75,
+        'Max': maxs
+    }).T
+    print(description)
+    #print(num.describe())
 
 def main():
     try:
