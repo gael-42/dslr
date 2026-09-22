@@ -1,13 +1,8 @@
-"""
-Take dataset as parameter, display info for all numerical features.
-Info to display: count, mean, std, min, 25%, 50%, 75%, Max.
-Each feature gets a column, each info gets a row.
-Cannot use function that calculates info by itself.
-"""
 import sys
 import pandas as pd
 import numpy as np
 import math
+
 
 def calculate_max(series):
     clean = series.dropna()
@@ -35,6 +30,7 @@ def calculate_75(series):
     percentile = clean[k] + f * (clean[k + 1] - clean[k])
     return percentile
 
+
 def calculate_50(series):
     clean = series.dropna().sort_values().to_numpy()
     if len(clean) == 0:
@@ -50,20 +46,22 @@ def calculate_50(series):
     percentile = clean[k] + f * (clean[k + 1] - clean[k])
     return percentile
 
+
 def calculate_25(series):
     clean = series.dropna().sort_values().to_numpy()
     if len(clean) == 0:
         return np.nan
     clean.sort()
     n = len(clean)
-    q = 0.25 # = 25 percentile
+    q = 0.25  # = 25 percentile
     idx = q * (n - 1)
-    k = int(np.floor(idx)) #round down to nearest integer
+    k = int(np.floor(idx))  # round down to nearest integer
     f = idx - k
     if k >= n - 1:
         return float(clean[-1])
     percentile = clean[k] + f * (clean[k + 1] - clean[k])
     return percentile
+
 
 def calculate_min(series):
     clean = series.dropna()
@@ -74,6 +72,7 @@ def calculate_min(series):
         if value < min:
             min = value
     return min
+
 
 def calculate_std(series):
     clean = series.dropna()
@@ -95,15 +94,17 @@ def calculate_means(series):
         return np.nan
     return sum(clean) / len(clean)
 
+
 def calculate_count(series):
     count = 0
     for value in series:
         if not pd.isna(value):
-            count +=1
+            count += 1
     return count
 
+
 def describe(dataset: pd.DataFrame):
-    num = dataset.select_dtypes(include= np.number)
+    num = dataset.select_dtypes(include=np.number)
     counts = num.apply(calculate_count)
     means = num.apply(calculate_means)
     stds = num.apply(calculate_std)
@@ -123,7 +124,8 @@ def describe(dataset: pd.DataFrame):
         'Max': maxs
     }).T
     print(description)
-    #print(num.describe())
+    # print(num.describe())
+
 
 def main():
     try:
@@ -133,6 +135,7 @@ def main():
         describe(dataset)
     except AssertionError as error:
         print("AssertionError:", error)
+
 
 if __name__ == "__main__":
     main()
