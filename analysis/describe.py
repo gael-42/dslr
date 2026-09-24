@@ -19,7 +19,6 @@ def calculate_75(series):
     clean = series.dropna().sort_values().to_numpy()
     if len(clean) == 0:
         return np.nan
-    clean.sort()
     n = len(clean)
     q = 0.75
     idx = q * (n - 1)
@@ -35,7 +34,6 @@ def calculate_50(series):
     clean = series.dropna().sort_values().to_numpy()
     if len(clean) == 0:
         return np.nan
-    clean.sort()
     n = len(clean)
     q = 0.50
     idx = q * (n - 1)
@@ -51,7 +49,6 @@ def calculate_25(series):
     clean = series.dropna().sort_values().to_numpy()
     if len(clean) == 0:
         return np.nan
-    clean.sort()
     n = len(clean)
     q = 0.25  # = 25 percentile
     idx = q * (n - 1)
