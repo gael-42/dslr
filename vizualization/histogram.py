@@ -33,9 +33,10 @@ def createHistogram(dataset):
     fig, axes = plt.subplots(nrows=3, ncols=5, figsize=(15, 10))
     axes = axes.flatten()
     for i, column in enumerate(grades.columns):
-        if i < len(grades.columns):
-            grades[column].hist(ax=axes[i], color='blue', grid=False)
-            axes[i].set_title(column)
+        grades[column].hist(ax=axes[i], color='blue', grid=False)
+        axes[i].set_title(column)
+    else:
+        [ax.set_visible(False) for ax in axes[i+1:]]
     plt.tight_layout()
     plt.show()
 
