@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 """
 Courses to exclude:
 - hist:
@@ -22,13 +23,14 @@ Final list:
 """
 
 class LogisticRegression:
-    def __init__(self, iterations=1000):
+    def __init__(self, learning_rate=0.01, iterations=1000):
         self.iterations = iterations
+        self.learning_rate = learning_rate
         self.weights = None
         self.bias = 0
         self.cost_history = []
 
-    def sigmoid(z):
+    def sigmoid(self, z):
         # sigmoid function used to get probability between 0 and 1
         y_head = 1 / (1+np.exp(-z))
         return y_head
@@ -47,17 +49,37 @@ class LogisticRegression:
             z = np.dot(x, self.weights) + self.bias
             # turn into 0 to 1 odd probability using sigmoid function
             h = self.sigmoid(z)
+            #use gradient descent to adjust weights and bias
+            d_weights = (1 / row) * np.dot(x.T, (h - y))
+            d_bias = (1 / row) * np.sum(h - y)
+            self.weights -= self.learning_rate * d_weights
+            self.bias -= self.learning_rate * d_bias
+            self.cost_history.append(self.cost(h, y))
+
+    def predict(self, x):
+        return (self.sigmoid(np.dot(x, self.weights) + self.bias) >= 0.5).astype(int)
 
 
 def logisticRegression(data):
     # separate classes (houses) from rest of data
-    y = data['Hogwarts House']
+    y = (data['Hogwarts House'] == 'Hufflepuff').astype(int)
     x = data.select_dtypes(include=np.number)
+    print(len(x), len(y))
     # remove features that muddy the data, based on pair plot
     x = x.drop(['Care of Magical Creatures', 'Defense Against the Dark Arts', 'Potions', 'Arithmancy'], axis=1)
     # split data into train and test, keep 25% of data to test model after training
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
-
+    model = LogisticRegression(learning_rate=0.1, iterations=1000)
+    model.train(x_train, y_train)
+    predictions = model.predict(x_test)
+    accuracy = np.mean(predictions == y_test)
+    print(f"Model Accuracy: {accuracy:.2f}")
+    plt.plot(model.cost_history)
+    plt.title("Cost Function Convergence")
+    plt.xlabel("Iterations")
+    plt.ylabel("Cost")
+    plt.grid(True)
+    plt.show()
 
 
 def main():
