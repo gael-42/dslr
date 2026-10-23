@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 import logreg_train as lgt
+import json
 """
 take dataset_test.csv as parameter and file containing weights
 generate file houses.csv with dataframe containing index and predicted house
@@ -26,21 +27,28 @@ def makePredictions(data, weights, bias):
 
     model = lgt.LogisticRegression(weights, bias, 0.01, 1000)
     predictions =predict(model, x)
-    print('Predictions:')
-    print(predictions) 
+
+def startModels(file, dataset):
+    models = {
+        d["house"]: {"weights": np.array(d["weights"]), "bias": d["bias"]}
+        for d in map(json.loads, open("weights.jsonl"))
+    }
+    print(models)
+
 
 
 
 def main():
     try:
         assert len(sys.argv) == 3, "wrong argument count"
-        assert sys.argv[1].find("dataset_test.csv") != -1 and  sys.argv[2].find("weights.txt") != -1 , "wrong file, use dataset_test.csv and weights.txt"
+        assert sys.argv[1].find("dataset_test.csv") != -1 and  sys.argv[2].find("weights.jsonl") != -1 , "wrong file, use dataset_test.csv and weights.txt"
         dataset = pd.read_csv(sys.argv[1], index_col="Index")
-        with open(sys.argv[2], 'r') as f:
-            r_weights, r_bias = f.read().strip().split('\n\n', 1)
-            weights = np.genfromtxt(io.StringIO(r_weights))
-            bias = float(r_bias)
-        makePredictions(dataset, weights, bias)
+        # with open(sys.argv[2], 'r') as f:
+        #     r_weights, r_bias = f.read().strip().split('\n\n', 1)
+        #     weights = np.genfromtxt(io.StringIO(r_weights))
+        #     bias = float(r_bias)
+        # makePredictions(dataset, weights, bias)
+        startModels(sys.argv[2], dataset)
     except AssertionError as error:
         print("AssertionError:", error)
 

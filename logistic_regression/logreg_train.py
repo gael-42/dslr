@@ -6,6 +6,7 @@ import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
+import json
 """
 take dataset_train.csv as parameter
 Generate file containing weights and bias
@@ -63,16 +64,16 @@ def trainModel(data):
     x = scaler.fit_transform(x)
 
     for house in houses:
-        print(house)
         y = (data['Hogwarts House'] == house).astype(int)
         model = LogisticRegression(None, 0, 0.1, 1000)
         model.train(x, y)
-        with open("weights.txt", "a") as f:
-            f.write(house)
-            f.write("\nWeights:\n")
-            np.savetxt(f, model.weights)
-            f.write("\nBias:\n")
-            f.write(str(model.bias) + "\n\n")
+        record = {
+        "house": house,
+        "weights": model.weights.tolist(),
+        "bias": float(model.bias),
+        }
+        with open("weights.jsonl", "a") as f:
+            f.write(json.dumps(record) + "\n")
 
 def main():
     try:
