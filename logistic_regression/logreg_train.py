@@ -47,39 +47,32 @@ class LogisticRegression:
     def predict(self, x):
         return (self.sigmoid(np.dot(x, self.weights) + self.bias) >= 0.5).astype(int)
 
-def testAccuracy(model, x_test, y_test):
-    predictions = model.predict(x_test)
-    accuracy = np.mean(predictions == y_test)
-    print(f"Model Accuracy: {accuracy:.2f}")
-    plt.plot(model.cost_history)
-    plt.title("Cost Function Convergence")
-    plt.xlabel("Iterations")
-    plt.ylabel("Cost")
-    plt.grid(True)
-    plt.show()
-
 def trainModel(data):
+    houses = {
+        'Hufflepuff',
+        'Gryffindor',
+        'Ravenclaw',
+        'Slytherin'
+    }
     # remove rows with missing data
     data = data.dropna()
-    # separate classes (houses) from rest of data
-    y = (data['Hogwarts House'] == 'Slytherin').astype(int)
     x = data.select_dtypes(include=np.number)
-    # remove features that muddy the data, based on pair plot
     x = x.drop(['Care of Magical Creatures', 'Defense Against the Dark Arts', 'Potions', 'Arithmancy'], axis=1)
-    # split data into train and test, keep 25% of data to test model after training
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
-
+    
     scaler = StandardScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
+    x = scaler.fit_transform(x)
 
-    model = LogisticRegression(None, 0, 0.1, 1000)
-    model.train(x_train, y_train)
-    with open("weights.txt", "a") as f:
-        np.savetxt("weights.txt", model.weights)
-        f.write("\n")
-        f.write(str(model.bias))
-    testAccuracy(model, x_test, y_test)
+    for house in houses:
+        print(house)
+        y = (data['Hogwarts House'] == house).astype(int)
+        model = LogisticRegression(None, 0, 0.1, 1000)
+        model.train(x, y)
+        with open("weights.txt", "a") as f:
+            f.write(house)
+            f.write("\nWeights:\n")
+            np.savetxt(f, model.weights)
+            f.write("\nBias:\n")
+            f.write(str(model.bias) + "\n\n")
 
 def main():
     try:
