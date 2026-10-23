@@ -17,10 +17,16 @@ def predict(model, x):
     return (model.sigmoid(np.dot(x, model.weights) + model.bias) >= 0.5).astype(int)
 
 def makePredictions(data, weights, bias):
+    num = data.select_dtypes(include=np.number)
+    x = num.drop(['Hogwarts House', 'Care of Magical Creatures', 'Defense Against the Dark Arts', 'Potions', 'Arithmancy'], axis=1)
+    x = x.fillna(x.mean()) # replace missing values with mean
+
     scaler = StandardScaler()
-    data = scaler.transform(data)
+    x = scaler.fit_transform(x)
+
     model = lgt.LogisticRegression(weights, bias, 0.01, 1000)
-    predictions =predict(model, data)
+    predictions =predict(model, x)
+    print('Predictions:')
     print(predictions) 
 
 

@@ -39,6 +39,19 @@ class LogisticRegression:
             self.bias -= self.learning_rate * d_bias
             self.cost_history.append(self.cost(h, y))
 
+    def predict(self, x):
+        return (self.sigmoid(np.dot(x, self.weights) + self.bias) >= 0.5).astype(int)
+
+def testAccuracy(model, x_test, y_test):
+    predictions = model.predict(x_test)
+    accuracy = np.mean(predictions == y_test)
+    print(f"Model Accuracy: {accuracy:.2f}")
+    plt.plot(model.cost_history)
+    plt.title("Cost Function Convergence")
+    plt.xlabel("Iterations")
+    plt.ylabel("Cost")
+    plt.grid(True)
+    plt.show()
 
 def trainModel(data):
     data = data.dropna()
@@ -57,6 +70,7 @@ def trainModel(data):
         np.savetxt("weights.txt", model.weights)
         f.write("\n")
         f.write(str(model.bias))
+    testAccuracy(model, x_test, y_test)
 
 def main():
     try:
