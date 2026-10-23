@@ -20,9 +20,11 @@ class LogisticRegression:
         self.cost_history = []
 
     def sigmoid(self, z):
+        # sigmoid function used to get probability between 0 and 1
         return 1 / (1 + np.exp(-z))
 
     def cost(self, h, y):
+        # calculate how well the model is performing
         m = len(y)
         return - (1/m) * np.sum(y*np.log(h) + (1-y)*np.log(1-h))
 
@@ -31,8 +33,11 @@ class LogisticRegression:
         self.weights = np.zeros(n)
 
         for _ in range(self.iterations):
+            # multiply data points by weights and add bias
             z = np.dot(x, self.weights) + self.bias
+            # turn into 0 to 1 odd probability using sigmoid function
             h = self.sigmoid(z)
+            #use gradient descent to adjust weights and bias
             d_weights = (1 / m) * np.dot(x.T, (h - y))
             d_bias = (1 / m) * np.sum(h - y)
             self.weights -= self.learning_rate * d_weights
@@ -54,10 +59,14 @@ def testAccuracy(model, x_test, y_test):
     plt.show()
 
 def trainModel(data):
+    # remove rows with missing data
     data = data.dropna()
+    # separate classes (houses) from rest of data
     y = (data['Hogwarts House'] == 'Slytherin').astype(int)
     x = data.select_dtypes(include=np.number)
+    # remove features that muddy the data, based on pair plot
     x = x.drop(['Care of Magical Creatures', 'Defense Against the Dark Arts', 'Potions', 'Arithmancy'], axis=1)
+    # split data into train and test, keep 25% of data to test model after training
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.25)
 
     scaler = StandardScaler()
