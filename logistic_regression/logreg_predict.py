@@ -31,12 +31,15 @@ def makePredictions(data, weights, bias):
 def startModels(file, dataset):
     models = {
         d["house"]: {"weights": np.array(d["weights"]), "bias": d["bias"]}
-        for d in map(json.loads, open("weights.jsonl"))
+        for d in map(json.loads, open(file))
     }
-    print(models)
-
-
-
+    loaded_models = {
+        house: lgt.LogisticRegression(weights=params['weights'], bias=params["bias"])
+        for house, params in models.items()
+    }
+    testDF = pd.DataFrame(loaded_models, index=[0])
+    print(testDF)
+# create dataframe with houses as columns, store probability for each row
 
 def main():
     try:
