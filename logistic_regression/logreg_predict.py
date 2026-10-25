@@ -15,20 +15,16 @@ generate file houses.csv with dataframe containing index and predicted house
 """
 
 def predict(model, x):
-    return (model.sigmoid(np.dot(x, model.weights) + model.bias) >= 0.5).astype(int)
+    return model.sigmoid(np.dot(x, model.weights) + model.bias)
 
-def makePredictions(data, weights, bias):
-    num = data.select_dtypes(include=np.number)
+def startModels(file, dataset):
+    num = dataset.select_dtypes(include=np.number)
     x = num.drop(['Hogwarts House', 'Care of Magical Creatures', 'Defense Against the Dark Arts', 'Potions', 'Arithmancy'], axis=1)
-    x = x.fillna(x.mean()) # replace missing values with mean
+    x = x.fillna(x.mean())
 
     scaler = StandardScaler()
     x = scaler.fit_transform(x)
 
-    model = lgt.LogisticRegression(weights, bias, 0.01, 1000)
-    predictions =predict(model, x)
-
-def startModels(file, dataset):
     models = {
         d["house"]: {"weights": np.array(d["weights"]), "bias": d["bias"]}
         for d in map(json.loads, open(file))
@@ -37,20 +33,20 @@ def startModels(file, dataset):
         house: lgt.LogisticRegression(weights=params['weights'], bias=params["bias"])
         for house, params in models.items()
     }
-    testDF = pd.DataFrame(loaded_models, index=[0])
-    print(testDF)
-# create dataframe with houses as columns, store probability for each row
+    predictions = {
+        house: predict(loaded_models[house], x)
+        for house in loaded_models.keys()
+    }
+    choixpeaux = pd.DataFrame(predictions).idxmax(axis=1)
+    choixpeaux.index.name = 'Index'
+    choixpeaux.name = 'Hogwarts House'
+    choixpeaux.to_csv("houses.csv")
 
 def main():
     try:
         assert len(sys.argv) == 3, "wrong argument count"
-        assert sys.argv[1].find("dataset_test.csv") != -1 and  sys.argv[2].find("weights.jsonl") != -1 , "wrong file, use dataset_test.csv and weights.txt"
+        assert sys.argv[1].find("dataset_test.csv") != -1 and  sys.argv[2].find("weights.jsonl") != -1 , "wrong file, use dataset_test.csv and weights.jsonl"
         dataset = pd.read_csv(sys.argv[1], index_col="Index")
-        # with open(sys.argv[2], 'r') as f:
-        #     r_weights, r_bias = f.read().strip().split('\n\n', 1)
-        #     weights = np.genfromtxt(io.StringIO(r_weights))
-        #     bias = float(r_bias)
-        # makePredictions(dataset, weights, bias)
         startModels(sys.argv[2], dataset)
     except AssertionError as error:
         print("AssertionError:", error)
