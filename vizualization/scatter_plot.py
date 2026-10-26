@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 def createScatterPlot(dataset):
@@ -28,7 +29,9 @@ def createScatterPlot(dataset):
     plt.show()
 
 def main():
-    dataset = pd.read_csv("../dataset_train.csv", index_col="Index")  # not ideal doesn't work if execute script from outside vizualize directory
+    script_dir = Path(__file__).resolve().parent
+    dataset_path = script_dir.parent / 'dataset_train.csv'
+    dataset = pd.read_csv(dataset_path, index_col="Index")
     createScatterPlot(dataset)
 
 
